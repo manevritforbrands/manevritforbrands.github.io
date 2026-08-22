@@ -4,7 +4,7 @@ html { scroll-behavior:smooth; }
 body { margin:0; overflow-x:hidden; background:var(--ivory); color:var(--black); font-family:Manrope,Arial,sans-serif; }
 .site-header { height:78px; display:flex; align-items:center; justify-content:space-between; padding:0 4vw; border-bottom:1px solid rgba(23,23,20,.16); position:relative; z-index:2; }
 .wordmark { color:inherit; text-decoration:none; font-size:14px; letter-spacing:-.04em; font-weight:800; } .wordmark span { color:var(--graphite); font-weight:500; }
-nav { display:flex; gap:24px; } nav a { color:var(--graphite); text-decoration:none; font:11px 'DM Mono',monospace; text-transform:uppercase; }
+nav { display:flex; gap:24px; } nav a { color:var(--graphite); text-decoration:none; font:12px 'DM Mono',monospace; text-transform:uppercase; }
 .hero { min-height:calc(100vh - 78px); padding:clamp(35px,6vw,100px) 4vw 48px; display:grid; grid-template-columns:1.05fr .95fr; gap:5vw; align-items:end; border-bottom:1px solid rgba(23,23,20,.16); }
 .eyebrow { margin:0 0 18px; color:var(--graphite); font:10px 'DM Mono',monospace; letter-spacing:.09em; }
 h1,h2,p { margin-top:0; } h1 { max-width:780px; margin-bottom:32px; font-size:clamp(45px,6.15vw,104px); line-height:.9; letter-spacing:-.075em; } h1 em { color:var(--wine); font-style:normal; }
@@ -33,5 +33,5 @@ h1,h2,p { margin-top:0; } h1 { max-width:780px; margin-bottom:32px; font-size:cl
   .work-card--video .video-shell{aspect-ratio:16/10}
   .work-card--large,.work-card--wide{grid-column:span 3}
 }
-@media (max-width:720px){ .site-header{height:64px}.site-header nav{gap:13px}.site-header nav a{font-size:9px}.hero{grid-template-columns:1fr;min-height:auto;padding-top:52px}.hero-copy{transform:none}.hero-image-wrap{min-height:440px}.work-section{padding:72px 4vw}.work-grid{grid-template-columns:1fr 1fr;gap:38px 16px}.work-card,.work-card--large,.work-card--wide,.work-card--detail{grid-column:span 1}.work-card--wide,.work-card--video{grid-column:span 2}.tone-garden{order:-2}.tone-jewellery{order:-1}.about{grid-template-columns:1fr;padding:72px 0;gap:8px}.contact{padding:75px 4vw}.card-meta{display:block}.card-meta p{margin-top:5px}.work-card--wide .media-shell{aspect-ratio:4/5} }
+@media (max-width:720px){ .site-header{height:64px}.site-header nav{gap:13px}.site-header nav a{font-size:10px}.hero{grid-template-columns:1fr;min-height:auto;padding-top:52px}.hero-copy{transform:none}.hero-image-wrap{min-height:440px}.work-section{padding:72px 4vw}.work-grid{grid-template-columns:1fr 1fr;gap:38px 16px}.work-card,.work-card--large,.work-card--wide,.work-card--detail{grid-column:span 1}.work-card--wide,.work-card--video{grid-column:span 2}.tone-garden{order:-2}.tone-jewellery{order:-1}.about{grid-template-columns:1fr;padding:72px 0;gap:8px}.contact{padding:75px 4vw}.card-meta{display:block}.card-meta p{margin-top:5px}.work-card--wide .media-shell{aspect-ratio:4/5} }
 @media (max-width:720px){.contact-links{grid-template-columns:1fr;margin-top:28px}}
