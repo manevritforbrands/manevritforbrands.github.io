@@ -102,8 +102,8 @@ document.querySelectorAll('[data-case]').forEach(sec => {
     sec.querySelector('.io-photos').innerHTML = c.photos.map((p, i) => `<img src="${base + p}" alt="" loading="lazy" style="--i:${i}">`).join('');
     sec.querySelector('.io-out .clip').innerHTML =
       `<video poster="${base + c.result}.jpg" preload="none" muted loop playsinline>` +
-      `<source src="${base + c.result}.av1.mp4" type="video/mp4; codecs=av01.0.05M.08">` +
-      `<source src="${base + c.result}.h264.mp4" type="video/mp4; codecs=avc1.4d401f"></video><a class="snd" href="#">звук</a>`;
+      `<source src="${base + c.result}.h264.mp4" type="video/mp4; codecs=avc1.4d401f">` +
+      `<source src="${base + c.result}.av1.mp4" type="video/mp4; codecs=av01.0.05M.08"></video><a class="snd" href="#">звук</a>`;
     sec.querySelector('.io-cap').textContent = c.caption || '';
     sec.hidden = false;
     clipObserver.observe(sec.querySelector('.io-out video'));
@@ -121,4 +121,29 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObse
   });
   const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
   targets.forEach(el => ro.observe(el));
+}
+
+// Плеер: превью открывает ролик со звуком и управлением, стрелки листают все ролики страницы
+const player = document.getElementById('player');
+if (player) {
+  const v = player.querySelector('video'), count = player.querySelector('.count'), cap = player.querySelector('.cap');
+  let list = [], at = 0;
+  const collect = () => { list = [...document.querySelectorAll('.vtile')]; };
+  const open = n => {
+    collect(); at = (n + list.length) % list.length;
+    const t = list[at];
+    v.poster = t.dataset.poster;
+    v.innerHTML = `<source src="${t.dataset.h264}" type="video/mp4; codecs=avc1.4d401f"><source src="${t.dataset.av1}" type="video/mp4; codecs=av01.0.05M.08">`;
+    v.load(); v.muted = false; v.play().catch(() => {});
+    count.textContent = `${at + 1} / ${list.length}`;
+    cap.textContent = t.dataset.caption || '';
+    if (!player.open) player.showModal();
+  };
+  document.addEventListener('click', e => { const t = e.target.closest('.vtile'); if (!t) return; e.preventDefault(); collect(); open(list.indexOf(t)); });
+  player.querySelector('.prev').addEventListener('click', () => open(at - 1));
+  player.querySelector('.next').addEventListener('click', () => open(at + 1));
+  player.querySelector('[data-close]').addEventListener('click', () => player.close());
+  player.addEventListener('click', e => { if (e.target.classList.contains('stage')) player.close(); });
+  player.addEventListener('close', () => v.pause());
+  addEventListener('keydown', e => { if (!player.open) return; if (e.key === 'ArrowLeft') open(at - 1); if (e.key === 'ArrowRight') open(at + 1); });
 }
