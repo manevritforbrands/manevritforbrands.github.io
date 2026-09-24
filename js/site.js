@@ -109,3 +109,16 @@ document.querySelectorAll('[data-case]').forEach(sec => {
     clipObserver.observe(sec.querySelector('.io-out video'));
   }).catch(() => {});
 });
+
+// Проявление блоков при прокрутке; без JS и при «уменьшить движение» всё видно сразу
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+  document.documentElement.classList.add('js-reveal');
+  const targets = document.querySelectorAll('.about > *, .section-title, .latest .card, .row > *, .group .note, .plan, .steps li, .io-grid');
+  targets.forEach(el => {
+    el.classList.add('reveal');
+    const row = el.parentElement;
+    if (row && (row.classList.contains('row') || row.classList.contains('latest'))) el.style.setProperty('--k', [...row.children].indexOf(el));
+  });
+  const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  targets.forEach(el => ro.observe(el));
+}

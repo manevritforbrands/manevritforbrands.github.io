@@ -190,3 +190,14 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cta{display:block;width:max-content;margin:clamp(50px,6vw,80px) auto 0;padding:16px 34px;border:1px solid var(--light);font:400 14px/1 var(--cap);letter-spacing:.24em;text-transform:uppercase;transition:background .4s,color .4s}
 .cta:hover{background:var(--light);color:var(--black)}
 @media (max-width:900px){.plans{grid-template-columns:1fr}}
+
+/* ── Движение: склейка между страницами и проявление блоков при прокрутке ── */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vt-out .35s ease both}
+::view-transition-new(root){animation:vt-in .6s var(--ease) both}
+@keyframes vt-out{to{opacity:0}}
+@keyframes vt-in{from{opacity:0}}
+.js-reveal .reveal{opacity:0;transform:translateY(28px);transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+.js-reveal .reveal.in{opacity:1;transform:none}
+.js-reveal .row .reveal{transition-delay:calc(var(--k,0)*90ms)}
+@media (prefers-reduced-motion:reduce){.js-reveal .reveal{opacity:1;transform:none}@view-transition{navigation:none}}
