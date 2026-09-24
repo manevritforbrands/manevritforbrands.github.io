@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ManeVRit for Brands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Forum&family=Old+Standard+TT:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#000;color:#e9e4da}
+body{font:400 16px/1.5 'Old Standard TT',serif}
+a{color:inherit;text-decoration:none}
+
+.s{position:relative;height:100svh;min-height:640px;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+
+/* Шторки: при входе съезжаются сверху и снизу, как занавес */
+.bar{position:relative;z-index:3;background:#000;display:flex;flex-direction:column;align-items:center;text-align:center}
+.bar.top{padding:26px 3vw 20px;animation:ct 1.8s cubic-bezier(.7,0,.2,1) both}
+.bar.bot{padding:22px 3vw 26px;animation:cb 1.8s cubic-bezier(.7,0,.2,1) both}
+@keyframes ct{from{transform:translateY(-100%)}}@keyframes cb{from{transform:translateY(100%)}}
+nav{display:flex;gap:34px;font:400 13px Forum,serif;letter-spacing:.24em;text-transform:uppercase;opacity:0;animation:f 1.6s 2.6s forwards}
+nav a{opacity:.7;transition:opacity .4s}nav a:hover,nav a.on{opacity:1}
+nav a.on{border-bottom:1px solid}
+
+/* Титр: MANEVRIT прописными с разрядкой + for Brands курсивом, одной строкой */
+h1{margin:0;display:flex;align-items:baseline;justify-content:center;gap:.45em;white-space:nowrap;font-weight:400;line-height:1}
+h1 .cap{font:400 clamp(34px,5.4vw,92px)/1 Forum,serif;letter-spacing:.3em;margin-right:-.3em}
+h1 .it{font:italic 400 clamp(28px,4.3vw,74px)/1 'Old Standard TT',serif;letter-spacing:.01em}
+h1 span span{display:inline-block;opacity:0;filter:blur(8px);animation:ttl 1.6s cubic-bezier(.16,1,.3,1) forwards;animation-delay:calc(1.4s + var(--i)*70ms)}
+@keyframes ttl{to{opacity:1;filter:blur(0)}}
+.sub{margin:14px 0 0;font-style:italic;color:#a9a399;opacity:0;animation:f 1.6s 2.8s forwards}
+@keyframes f{to{opacity:1}}
+
+/* Стена экранов: центр — три окна с роликами, по бокам — фото. Каждое окно само меняет работу */
+.wall{position:relative;z-index:1;display:grid;gap:8px;padding:0 3vw;min-height:0;
+  grid-template-columns:1fr 1.55fr 1.55fr 1.55fr 1fr;grid-template-rows:1fr 1fr 1fr 1fr 1fr 1fr}
+.w{position:relative;overflow:hidden;background:#0d0d0d}
+.w>*{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.1s ease}
+.w>.on{opacity:1}
+.w.v{grid-row:1/7}
+.w.p1{grid-column:1;grid-row:1/4}.w.p2{grid-column:1;grid-row:4/7}
+.w.p3{grid-column:5;grid-row:1/3}.w.p4{grid-column:5;grid-row:3/5}.w.p5{grid-column:5;grid-row:5/7}
+.w.p1,.w.p2,.w.p3,.w.p4,.w.p5{filter:saturate(.85) brightness(.92)}
+.w:hover{filter:none}
+
+/* Зерно плёнки поверх всей стены */
+.wall:after{content:"";position:absolute;inset:-40%;pointer-events:none;opacity:.1;animation:grain .45s steps(4) infinite;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes grain{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-1%,3%)}}
+
+.snd{position:absolute;right:3vw;bottom:26px;z-index:4;font-style:italic;color:#a9a399;border-bottom:1px solid #444;opacity:0;animation:f 1.6s 3s forwards}
+
+@media(max-width:760px){
+  .bar.top{padding:16px 8px 12px}nav{gap:12px;font-size:10px;letter-spacing:.12em}
+  .wall{padding:0 10px;gap:5px;grid-template-columns:1fr 1fr 1fr;grid-template-rows:2.2fr 1fr 1fr}
+  .w.v1{grid-column:1/4;grid-row:1}.w.v2{grid-column:1/3;grid-row:2}.w.v3{grid-column:3;grid-row:2}
+  .w.p1{grid-column:1;grid-row:3}.w.p2{grid-column:2;grid-row:3}.w.p3{grid-column:3;grid-row:3}.w.p4,.w.p5{display:none}
+  h1{flex-direction:column;align-items:center;gap:6px}h1 .cap{font-size:10.5vw}h1 .it{font-size:8vw}
+  .snd{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important}}
+</style>
+</head>
+<body>
+<section class="s">
+  <div class="bar top"><nav><a class="on" href="#">Главная</a><a href="#">AI-видео</a><a href="#">AI-фото</a><a href="#">Стоимость</a><a href="#">Контакты</a></nav></div>
+  <div class="wall" id="wall">
+    <div class="w p1"></div><div class="w p2"></div>
+    <div class="w v v1" style="grid-column:2"></div><div class="w v v2" style="grid-column:3"></div><div class="w v v3" style="grid-column:4"></div>
+    <div class="w p3"></div><div class="w p4"></div><div class="w p5"></div>
+  </div>
+  <div class="bar bot">
+    <h1 id="t"><span class="cap">MANEVRIT</span><span class="it">for Brands</span></h1>
+    <p class="sub">реклама для брендов, снятая без камеры</p>
+  </div>
+  <a class="snd" href="#" id="snd">включить звук</a>
+</section>
+<script>
+// Сюда добавляются новые работы: окна сами берут их по очереди
+const A='../../assets/';
+const VIDEOS=[{s:'videos/racing-case.mp4',p:'videos/racing-case.jpg'},{s:'videos/mono-case.mp4',p:'videos/mono-case.jpg'}];
+const PHOTOS=['garden-editorial.jpg','jewellery-detail.jpg','lake-tailoring.jpg','teal-fashion.jpg','tennis-lifestyle.jpg'];
+
+// Титр по буквам
+document.querySelectorAll('#t > span').forEach((el,k)=>{let i=k*8;el.innerHTML=[...el.textContent].map(c=>`<span style="--i:${i++}">${c===' '?'&nbsp;':c}</span>`).join('')});
+
+// Каждое окно держит два слоя и плавно меняет работу. Берётся работа, которой сейчас нет на экране;
+// если свободных нет, два окна меняются содержимым.
+function wall(els,pool,make,every){
+  const st=els.map((el,i)=>{const a=make(pool[i%pool.length],i),b=make(pool[i%pool.length],i);el.append(a,b);a.classList.add('on');return{el,k:i%pool.length,l:[a,b],c:0,i}});
+  const set=(x,k)=>{const nx=x.l[1-x.c];make.load(nx,pool[k],x.i);nx.classList.add('on');x.l[x.c].classList.remove('on');x.c=1-x.c;x.k=k};
+  let turn=0;
+  setInterval(()=>{const x=st[turn++%st.length];const used=st.map(y=>y.k);const free=pool.map((_,k)=>k).filter(k=>!used.includes(k));
+    if(free.length)set(x,free[Math.floor(Math.random()*free.length)]);
+    else{const y=st.filter(y=>y!==x&&y.k!==x.k)[Math.floor(Math.random()*(st.length-1))]||st[(x.i+1)%st.length];const kx=x.k;set(x,y.k);set(y,kx)}
+  },every);
+}
+const vid=(w,o)=>{const v=document.createElement('video');Object.assign(v,{muted:true,loop:true,playsInline:true,autoplay:true});vid.load(v,w,o);return v};
+vid.load=(v,w,o)=>{v.poster=A+w.p;v.src=A+w.s;v.addEventListener('loadedmetadata',()=>{v.currentTime=(o*7.3)%Math.max(1,v.duration-1)},{once:true});v.play().catch(()=>{})};
+const img=s=>{const i=document.createElement('img');i.alt='';i.src=A+s;return i};img.load=(i,s)=>{i.src=A+s};
+
+wall([...document.querySelectorAll('.w.v')],VIDEOS,vid,6500);
+wall([...document.querySelectorAll('.w:not(.v)')],PHOTOS,img,2600);
+
+document.getElementById('snd').onclick=e=>{e.preventDefault();const v=document.querySelector('.v1 video.on');if(!v)return;v.muted=!v.muted;e.target.textContent=v.muted?'включить звук':'выключить звук'};
+</script>
+</body>
+</html>
