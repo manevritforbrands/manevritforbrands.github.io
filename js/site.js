@@ -93,3 +93,19 @@ document.querySelectorAll('template.slot').forEach(t => {
     vs.forEach(v => clipObserver.observe(v));
   }).catch(() => {});
 });
+
+// Вход → выход: блок собирается из case.json и показывается, только если кейс уже лежит в репозитории
+document.querySelectorAll('[data-case]').forEach(sec => {
+  const base = sec.dataset.case;
+  fetch(base + 'case.json').then(r => r.ok ? r.json() : null).then(c => {
+    if (!c || !c.photos || !c.photos.length || !c.result) return;
+    sec.querySelector('.io-photos').innerHTML = c.photos.map((p, i) => `<img src="${base + p}" alt="" loading="lazy" style="--i:${i}">`).join('');
+    sec.querySelector('.io-out .clip').innerHTML =
+      `<video poster="${base + c.result}.jpg" preload="none" muted loop playsinline>` +
+      `<source src="${base + c.result}.av1.mp4" type="video/mp4; codecs=av01.0.05M.08">` +
+      `<source src="${base + c.result}.h264.mp4" type="video/mp4; codecs=avc1.4d401f"></video><a class="snd" href="#">звук</a>`;
+    sec.querySelector('.io-cap').textContent = c.caption || '';
+    sec.hidden = false;
+    clipObserver.observe(sec.querySelector('.io-out video'));
+  }).catch(() => {});
+});
