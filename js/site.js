@@ -56,7 +56,7 @@ const clipObserver = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) { if (v.preload !== 'auto') { v.preload = 'auto'; v.load(); } v.play().catch(() => {}); }
   else v.pause();
 }), { threshold: .35 });
-document.querySelectorAll('.clip video').forEach(v => clipObserver.observe(v));
+document.querySelectorAll('.clip video, .vtile video').forEach(v => clipObserver.observe(v));
 document.addEventListener('click', e => {
   const b = e.target.closest('.clip .snd');
   if (!b) return;

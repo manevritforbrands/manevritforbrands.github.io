@@ -221,3 +221,24 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .player .nav-btn{position:fixed;top:50%;translate:0 -50%;font-size:34px;color:var(--dim);padding:20px}
 .player .nav-btn:hover{color:var(--light)}.player .prev{left:4px}.player .next{right:4px}
 .page-head.tight{padding:clamp(40px,6vw,90px) var(--gutter) clamp(28px,3vw,48px)}
+
+/* ── Стоимость: предложение и рядом визуал того, что за него получаешь ── */
+.offers{max-width:1320px;margin:0 auto;padding:0 var(--gutter)}
+.marquee + .offers .offer:first-child{border-top:1px dashed #333;padding-top:clamp(48px,6vw,90px)}
+.offer{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(28px,5vw,90px);align-items:center;padding:clamp(48px,6vw,90px) 0;border-top:1px dashed #333}
+.offer:first-child{border-top:0;padding-top:0}
+.offer h2{margin:0 0 14px;font:400 clamp(24px,2.4vw,36px)/1.15 var(--cap);letter-spacing:.14em;text-transform:uppercase}
+.offer .price{margin:0 0 22px;font:italic 400 clamp(22px,2vw,30px)/1.2 var(--text)}
+.offer ul{margin:0 0 22px;padding:0;list-style:none;color:#d6d0c5}
+.offer li{padding:8px 0;border-top:1px solid var(--line)}
+.offer .time{margin:0;color:var(--dim);font-style:italic}
+.offer .pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.offer .pair img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.vtile.wide video,.vtile.wide img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block}
+.marquee{overflow:hidden;margin:0 0 clamp(20px,3vw,40px);padding:6px 0}
+.marquee .track{display:flex;gap:10px;width:max-content;animation:marquee 70s linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+.marquee img{height:clamp(240px,34vw,460px);width:auto;aspect-ratio:4/5;object-fit:cover}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@media (max-width:860px){.offer{grid-template-columns:1fr}.offer .visual{order:-1}}
+@media (prefers-reduced-motion:reduce){.marquee .track{animation:none}.marquee{overflow-x:auto}}
