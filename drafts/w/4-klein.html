@@ -1,0 +1,26 @@
+<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><title>4 Кляйн</title>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Rubik:wght@400;500&display=swap" rel="stylesheet"><style>
+:root{--k:#0A2BFF}
+*{box-sizing:border-box}html,body{margin:0;background:var(--k);color:#fff;overflow:hidden}body{font:500 15px/1.4 Rubik,sans-serif}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;z-index:500;top:18px;left:50%;translate:-50% 0;display:flex;gap:4px;background:#fff;color:var(--k);padding:5px;border-radius:99px}
+nav a{padding:9px 16px;border-radius:99px;white-space:nowrap}nav a.on{background:var(--k);color:#fff}
+h1{position:absolute;inset:0;margin:0;display:grid;place-items:center;font:400 13.6vw/.9 'Dela Gothic One',sans-serif;letter-spacing:-.02em;text-align:center;user-select:none}
+h1 small{display:block;font:500 max(15px,1.2vw) Rubik;letter-spacing:0;margin-top:1.2vw}
+.card{position:absolute;left:var(--x);top:var(--y);width:var(--w);background:#fff;padding:8px 8px 34px;rotate:var(--rot);cursor:grab;touch-action:none;
+  box-shadow:0 30px 60px -20px rgba(0,0,40,.55);animation:drop 1s cubic-bezier(.34,1.56,.64,1) both;animation-delay:var(--d)}
+.card:active{cursor:grabbing}.card img,.card video{display:block;width:100%;aspect-ratio:var(--r);object-fit:cover;pointer-events:none}
+.card span{position:absolute;left:10px;bottom:9px;color:#222;font-size:12px}
+@keyframes drop{from{opacity:0;transform:translateY(-60vh) rotate(-20deg)}}
+.hint{position:absolute;bottom:20px;left:0;right:0;text-align:center;opacity:.75;font-size:13px}
+@media(max-width:760px){nav{gap:0;font-size:11.5px;top:12px}nav a{padding:7px 8px}h1{font-size:13vw}.card{width:calc(var(--w)*2.6)}}
+</style></head><body>
+<nav><a class="on" href="#">Главная</a><a href="#">AI-видео</a><a href="#">AI-фото</a><a href="#">Стоимость</a><a href="#">Контакты</a></nav>
+<h1><div>МАНЕВРИТ<small>AI-видео и фото для брендов</small></div></h1>
+<div id="cards"></div><p class="hint">Карточки можно двигать</p>
+<script>
+const A='../../assets/',C=[['garden-editorial.jpg','4/5','6%','14%','13vw','-7deg'],['videos/racing-case','3/4','74%','10%','12vw','6deg',1],['teal-fashion.jpg','4/5','30%','60%','10vw','4deg'],['jewellery-detail.jpg','2/3','84%','52%','10vw','-5deg'],['lake-tailoring.jpg','4/5','58%','64%','11vw','-3deg'],['videos/mono-case','1/1','3%','60%','12vw','8deg',1],['tennis-lifestyle.jpg','4/5','44%','8%','9vw','-10deg']];
+document.getElementById('cards').innerHTML=C.map((c,i)=>`<div class="card" style="--x:${c[2]};--y:${c[3]};--w:${c[4]};--rot:${c[5]};--r:${c[1]};--d:${.15*i}s;z-index:${10+i}">${c[6]?`<video src="${A+c[0]}.mp4" poster="${A+c[0]}.jpg" autoplay muted loop playsinline></video>`:`<img src="${A+c[0]}" alt="">`}<span>Творческая работа</span></div>`).join('');
+let z=100;document.querySelectorAll('.card').forEach(el=>{el.onpointerdown=e=>{el.setPointerCapture(e.pointerId);el.style.zIndex=++z;const sx=e.clientX-el.offsetLeft,sy=e.clientY-el.offsetTop;
+ el.onpointermove=m=>{el.style.left=(m.clientX-sx)+'px';el.style.top=(m.clientY-sy)+'px'};el.onpointerup=()=>el.onpointermove=null}});
+</script></body></html>
