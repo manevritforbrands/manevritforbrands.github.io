@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ManeVRit for Brands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Manrope:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E6E3DE;--ink:#141412;--soft:rgba(20,20,18,.55)}
+:root[data-theme=dark]{--bg:#0E0E0D;--ink:#EDEAE4;--soft:rgba(237,234,228,.55)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:400 13px/1.5 Manrope,system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;z-index:10;top:0;left:0;right:0;display:flex;justify-content:center;gap:44px;padding:26px 16px;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+nav a{opacity:.8;transition:opacity .3s}nav a:hover,nav a.on{opacity:1}
+.stage{position:relative;height:100svh;min-height:620px;overflow:hidden}
+.t{position:absolute;left:var(--x);top:var(--y);width:var(--w);margin:0;will-change:transform;
+  opacity:0;animation:in 1.6s cubic-bezier(.2,.7,.1,1) forwards;animation-delay:var(--d)}
+.t img,.t video{display:block;width:100%;aspect-ratio:var(--r);object-fit:cover;background:#cfcac2}
+@keyframes in{from{opacity:0;translate:0 40px;scale:.96}to{opacity:1;translate:0 0;scale:1}}
+.mark{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;z-index:5}
+.mark h1{margin:0;font:500 clamp(58px,9.4vw,168px)/.9 'Cormorant Garamond',serif;letter-spacing:-.01em;
+  opacity:0;animation:fade 2s .5s ease forwards}
+.mark h1 i{font-size:.42em;letter-spacing:.02em;display:block;margin-top:.25em}
+.mark p{margin:26px 0 0;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--soft);opacity:0;animation:fade 2s 1s ease forwards}
+@keyframes fade{to{opacity:1}}
+.down{position:absolute;z-index:6;left:50%;bottom:22px;translate:-50% 0;font-size:18px;opacity:.7}
+@media(max-width:760px){
+  nav{gap:22px;padding:20px 12px;font-size:10px;letter-spacing:.12em}
+  .t{left:var(--mx);top:var(--my);width:var(--mw)}
+  .t.nm{display:none}
+}
+</style>
+</head>
+<body>
+<nav><a class="on" href="#">Главная</a><a href="#">Портфолио</a><a href="#">Стоимость</a><a href="#">Контакты</a></nav>
+<section class="stage" id="stage">
+  <figure class="t" data-z="1.4" style="--x:7%;--y:12%;--w:15vw;--r:4/5;--d:.1s;--mx:-6%;--my:9%;--mw:40vw"><img src="../assets/garden-editorial.jpg" alt=""></figure>
+  <figure class="t" data-z=".7" style="--x:29%;--y:13%;--w:9.5vw;--r:4/5;--d:.35s;--mx:44%;--my:6%;--mw:26vw"><img src="../assets/teal-fashion.jpg" alt=""></figure>
+  <figure class="t" data-z="1.1" style="--x:73%;--y:8%;--w:13.5vw;--r:3/4;--d:.2s;--mx:74%;--my:11%;--mw:34vw"><video poster="../assets/videos/racing-case.jpg" src="../assets/videos/racing-case.mp4" autoplay muted loop playsinline></video></figure>
+  <figure class="t" data-z=".9" style="--x:2.5%;--y:55%;--w:12vw;--r:2/3;--d:.5s;--mx:-4%;--my:64%;--mw:30vw"><img src="../assets/jewellery-detail.jpg" alt=""></figure>
+  <figure class="t" data-z="1.3" style="--x:26%;--y:66%;--w:12.5vw;--r:4/5;--d:.65s;--mx:30%;--my:72%;--mw:30vw"><img src="../assets/lake-tailoring.jpg" alt=""></figure>
+  <figure class="t" data-z=".8" style="--x:61%;--y:67%;--w:14vw;--r:1/1;--d:.45s;--mx:66%;--my:66%;--mw:38vw"><video poster="../assets/videos/mono-case.jpg" src="../assets/videos/mono-case.mp4" autoplay muted loop playsinline></video></figure>
+  <figure class="t nm" data-z="1.2" style="--x:86%;--y:44%;--w:11.5vw;--r:4/5;--d:.8s"><img src="../assets/tennis-lifestyle.jpg" alt=""></figure>
+  <div class="mark"><h1>ManeVRit<i>for Brands</i></h1><p>AI-видео и фото для брендов</p></div>
+  <a class="down" href="#">↓</a>
+</section>
+<script>
+// Тайлы плавают на разной глубине: мышь и скролл сдвигают их с разной скоростью.
+const tiles=[...document.querySelectorAll('.t')];let mx=0,my=0,cx=0,cy=0;
+addEventListener('mousemove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+(function loop(){cx+=(mx-cx)*.06;cy+=(my-cy)*.06;const s=scrollY;
+  tiles.forEach(t=>{const z=+t.dataset.z;t.style.transform=`translate3d(${-cx*28*z}px,${-cy*22*z-s*.25*z}px,0)`});
+  requestAnimationFrame(loop)})();
+if(new URLSearchParams(location.search).get('theme')==='dark')document.documentElement.dataset.theme='dark';
+</script>
+</body></html>
