@@ -21,9 +21,13 @@ if (reel) {
   const EVERY = 3000;
   let cur = 0, muted = true;
   const warm = v => { if (v.preload !== 'auto') { v.preload = 'auto'; v.load(); } };
+  const snd = document.querySelector('[data-sound]');
+  const label = () => { if (snd) snd.textContent = muted ? 'включить звук' : 'выключить звук'; };
+  // Если браузер не дал играть со звуком (iOS без жеста), ролик не встаёт: продолжаем без звука
+  const play = v => v.play().catch(() => { if (!v.muted) { muted = true; label(); vids.forEach(o => { o.muted = true; }); v.play().catch(() => {}); } });
   const show = n => {
     vids.forEach((v, k) => {
-      if (k === n) { warm(v); v.muted = muted; v.play().catch(() => {}); v.classList.add('on'); }
+      if (k === n) { warm(v); v.muted = muted; play(v); v.classList.add('on'); }
       else { v.classList.remove('on'); setTimeout(() => { if (!v.classList.contains('on')) v.pause(); }, 600); }
     });
     warm(vids[(n + 1) % vids.length]);
@@ -32,10 +36,15 @@ if (reel) {
   show(0);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (vids.length > 1 && !reduce) setInterval(() => { cur = (cur + 1) % vids.length; show(cur); }, EVERY);
-  const snd = document.querySelector('[data-sound]');
   if (snd) snd.addEventListener('click', e => {
-    e.preventDefault(); muted = !muted; vids[cur].muted = muted;
-    snd.textContent = muted ? 'включить звук' : 'выключить звук';
+    e.preventDefault(); muted = !muted;
+    vids.forEach((v, k) => {
+      v.muted = muted;
+      // Safari разрешает звук только ролику, запущенному по нажатию, — поэтому в момент клика трогаем play у всех и тут же ставим невидимые на паузу
+      if (!muted && k !== cur) { v.play().catch(() => {}); v.pause(); }
+    });
+    if (!muted) play(vids[cur]);
+    label();
   });
 }
 
