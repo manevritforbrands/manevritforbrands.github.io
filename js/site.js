@@ -223,3 +223,29 @@ if (player) {
   player.addEventListener('close', () => v.pause());
   addEventListener('keydown', e => { if (!player.open) return; if (e.key === 'ArrowLeft') open(at - 1); if (e.key === 'ArrowRight') open(at + 1); });
 }
+
+// Шлейф за курсором: несколько светлых пылинок, всплывают и гаснут меньше чем за секунду. Только мышь, без «уменьшить движение»
+if (matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const c = document.createElement('canvas'), x = c.getContext('2d'), P = [];
+  c.className = 'trail'; c.setAttribute('aria-hidden', 'true'); document.body.appendChild(c);
+  let W, H, dpr, lx = null, ly = null, run = false;
+  const size = () => { dpr = devicePixelRatio || 1; W = innerWidth; H = innerHeight; c.width = W * dpr; c.height = H * dpr; };
+  size(); addEventListener('resize', size);
+  const tick = () => {
+    x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
+    for (let i = P.length - 1; i >= 0; i--) {
+      const p = P[i]; p.x += p.vx; p.y += p.vy; p.vx *= .96; p.vy = p.vy * .96 - .003; p.life -= p.decay;
+      if (p.life <= 0) { P.splice(i, 1); continue; }
+      x.fillStyle = 'rgba(236,231,221,' + p.life * .45 + ')'; x.beginPath(); x.arc(p.x, p.y, p.r, 0, 6.283); x.fill();
+    }
+    if (P.length) requestAnimationFrame(tick); else { run = false; x.clearRect(0, 0, W, H); }
+  };
+  addEventListener('pointermove', e => {
+    if (lx !== null) {
+      const dx = e.clientX - lx, dy = e.clientY - ly, n = Math.min(3, Math.floor(Math.hypot(dx, dy) / 12));
+      for (let i = 0; i < n; i++) { const k = Math.random(); P.push({ x: lx + dx * k + (Math.random() - .5) * 8, y: ly + dy * k + (Math.random() - .5) * 8, vx: (Math.random() - .5) * .3 + dx * .008, vy: (Math.random() - .5) * .3 - .1 + dy * .008, life: 1, decay: .02 + Math.random() * .02, r: .5 + Math.random() * 1.1 }); }
+      if (P.length && !run) { run = true; requestAnimationFrame(tick); }
+    }
+    lx = e.clientX; ly = e.clientY;
+  });
+}
