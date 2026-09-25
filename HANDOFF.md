@@ -27,7 +27,7 @@
 | `assets/posters/*.jpg` | Постеры 16:9 для плеера и кадра на главной; `lingerie-water-pool.jpg` — отдельный кадр, чтобы не путать с `lingerie-wave` |
 | `assets/thumbs/*.webp` | Превью 4:5 (800×1000) для сетки видео, кадры выбраны вручную |
 | `assets/rasul-portrait.webp` | Фото Расула для «О студии» (1398×2100) |
-| `assets/*.jpg` (lake-tailoring, jewellery-detail, garden-editorial, teal-fashion) | Работы прошлых лет — блок `#archive` на «AI-фото» |
+| `assets/*.jpg` (lake-tailoring, jewellery-detail, garden-editorial, teal-fashion) | Работы прошлых лет — блок `#archive` на «AI-фото». Для lake-tailoring и jewellery-detail на сайте стоят лёгкие `.webp` (высота 2000, SSIM 0.98, 0.46 и 0.36 МБ вместо 2.9 и 2.2); оригиналы `.jpg` лежат рядом, не удалять |
 | `assets/tennis-lifestyle.jpg`, `rasul-hero.jpg`, `assets/videos/racing-case.mp4`, `mono-case.mp4` | На сайте не используются, **заказчик просил не удалять**. `tennis-lifestyle.jpg` — та же зелёная корзина, что `basket-03` (SSIM 0.96), поэтому в `#archive` не выведен |
 
 У фото прописаны описания `alt` (по ASSETS.md), у страниц — полные `og:url`, `og:image`, `canonical`.
