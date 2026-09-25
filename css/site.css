@@ -284,3 +284,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 }
 /* Шлейф пыли за курсором (рисует site.js) */
 .trail{position:fixed;inset:0;z-index:999;pointer-events:none}
+/* Кораблик вместо полосы прокрутки (рисует site.js): тонкая линия справа, стандартная полоса спрятана — только на компьютере с мышью */
+html.shipbar{scrollbar-width:none}
+html.shipbar::-webkit-scrollbar{display:none}
+.ship-track{position:fixed;top:0;bottom:0;right:0;width:40px;z-index:998;cursor:grab}
+.ship-track.grab{cursor:grabbing}
+.ship-track:before{content:"";position:absolute;top:14px;bottom:14px;left:50%;width:1px;background:var(--line)}
+.ship-track .ship{position:absolute;left:50%;top:0;transform-origin:50% 50%;transition:filter .3s}
+.ship-track:hover .ship{filter:drop-shadow(0 0 4px rgba(236,231,221,.5))}
+.ship-track canvas{position:absolute;inset:0;width:40px;height:100%;pointer-events:none}

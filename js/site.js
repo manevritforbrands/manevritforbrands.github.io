@@ -52,7 +52,7 @@ if (reel) {
   if (vids.length > 1 && !reduce) setInterval(() => { cur = (cur + 1) % vids.length; show(cur); }, EVERY);
 }
 
-// Поля по бокам от кадра на главной: зал тонкими линиями, ряды кресел и пыль в свете проектора.
+// Поля по бокам от кадра на главной: тонкие линии перспективы и звёзды в три слоя глубины, изредка падающая звезда.
 // Кадр не трогаем. Только на компьютере с мышью; при «уменьшить движение» — ничего
 const hall = document.querySelector('.hero .reel');
 if (hall && matchMedia('(min-width:761px) and (hover:hover) and (pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -64,8 +64,9 @@ if (hall && matchMedia('(min-width:761px) and (hover:hover) and (pointer:fine)')
   addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; const h = hero.getBoundingClientRect(); px = e.clientX - h.left; py = e.clientY - h.top; });
   new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) requestAnimationFrame(draw); }).observe(hero);
   const lerp = (a, b, t) => a + (b - a) * t;
-  const dust = Array.from({ length: 130 }, () => ({ x: Math.random(), y: Math.random(), z: Math.random(), vx: (Math.random() - .5) * .00012, vy: -(.00005 + Math.random() * .00016), ph: Math.random() * 6.28, ox: 0, oy: 0 }));
-  const seat = (sx, yy, sw, sh) => { x.beginPath(); x.moveTo(sx, yy + sh); x.lineTo(sx, yy + sw * .32); x.quadraticCurveTo(sx, yy, sx + sw * .3, yy); x.lineTo(sx + sw * .7, yy); x.quadraticCurveTo(sx + sw, yy, sx + sw, yy + sw * .32); x.lineTo(sx + sw, yy + sh); };
+  // звёзды: z — глубина (0 далеко, 1 близко); ближние крупнее, ярче, быстрее и сильнее уходят за мышью
+  const dust = Array.from({ length: 150 }, () => { const z = Math.pow(Math.random(), 1.8); return { x: Math.random(), y: Math.random(), z, vx: 0, vy: -(.00001 + z * .00012), ph: Math.random() * 6.28, ox: 0, oy: 0 }; });
+  let shoot = null, nextShoot = performance.now() + 6000 + Math.random() * 8000;
   function draw(t) {
     if (!on) return;
     mx += (tx - mx) * .05; my += (ty - my) * .05;
@@ -82,27 +83,21 @@ if (hall && matchMedia('(min-width:761px) and (hover:hover) and (pointer:fine)')
       const k = Math.pow(p, 1.7), X = lerp(ex, ct[0], k);
       x.beginPath(); x.moveTo(X, lerp(T, ct[1], k)); x.lineTo(X, lerp(B, cb[1], k)); x.stroke();
     }
-    // ряды кресел: ближний ряд смещается от мыши сильнее — глубина
-    for (let row = 0; row < 4; row++) {
-      const k = Math.pow((row + 1) / 4.4, 1.4), par = lerp(.2, 1.3, k), sw = lerp(20, 64, k), gap = sw * .18;
-      for (const left of [true, false]) {
-        const x0 = lerp(left ? L : R, left ? C[2][0] : C[3][0], k) - mx * 90 * par, y0 = lerp(B, H + oy, k) - lerp(4, 40, k) - my * 30 * par;
-        let sx = x0 + (left ? -sw - gap : gap);
-        for (let n = 0; n < 30 && (left ? sx + sw > -20 : sx < W + 20); n++) {
-          seat(sx, y0 + Math.abs(sx - x0) * .05, sw, sw * .9);
-          x.fillStyle = '#050505'; x.fill(); x.strokeStyle = 'rgba(236,231,221,' + (.07 + k * .08) + ')'; x.stroke();
-          sx += (left ? -1 : 1) * (sw + gap);
-        }
-      }
-    }
-    // пыль: плывёт вверх, мерцает, расходится от мыши
+    // звёзды: медленно всплывают, мерцают, расходятся от мыши
     for (const d of dust) {
       d.x += d.vx; d.y += d.vy; if (d.y < -.02) { d.y = 1.02; d.x = Math.random(); } d.x = (d.x + 1) % 1;
       const X = d.x < .5 ? d.x * 2 * L : R + (d.x - .5) * 2 * (W - R), Y = d.y * H;
       const dx = X - px, dy = Y - py, dist = Math.hypot(dx, dy) || 1, push = Math.max(0, 1 - dist / 170);
       d.ox += (dx / dist * push * 46 - d.ox) * .08; d.oy += (dy / dist * push * 46 - d.oy) * .08;
-      x.fillStyle = 'rgba(236,231,221,' + (.18 + d.z * .5) * (.6 + .4 * Math.sin(t / 900 + d.ph)) + ')';
-      x.beginPath(); x.arc(X + d.ox - mx * 40 * d.z, Y + d.oy - my * 20 * d.z, .7 + d.z * 1.5, 0, 6.283); x.fill();
+      x.fillStyle = 'rgba(236,231,221,' + (.24 + d.z * .55) * (.55 + .45 * Math.sin(t / (700 + d.z * 900) + d.ph)) + ')';
+      x.beginPath(); x.arc(X + d.ox - mx * 70 * d.z, Y + d.oy - my * 35 * d.z, .65 + d.z * 1.6, 0, 6.283); x.fill();
+    }
+    // падающая звезда: раз в 10–20 с, по одному из полей, тонкий росчерк
+    if (!shoot && t > nextShoot) { const left = Math.random() < .5, x0 = left ? Math.random() * L * .7 : R + (W - R) * (.3 + Math.random() * .7); shoot = { x: x0, y: Math.random() * H * .45, vx: (left ? 1 : -1) * (2.2 + Math.random()), vy: 1.4 + Math.random() * .8, life: 1, left }; }
+    if (shoot) {
+      const sh = shoot; sh.x += sh.vx; sh.y += sh.vy; sh.life -= .014;
+      if (sh.life <= 0 || (sh.left ? sh.x > L : sh.x < R)) { shoot = null; nextShoot = t + 10000 + Math.random() * 10000; }
+      else { x.strokeStyle = 'rgba(236,231,221,' + sh.life * .55 + ')'; x.lineWidth = 1; x.beginPath(); x.moveTo(sh.x, sh.y); x.lineTo(sh.x - sh.vx * 16, sh.y - sh.vy * 16); x.stroke(); }
     }
     x.restore(); requestAnimationFrame(draw);
   }
@@ -249,3 +244,37 @@ if (matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(pref
     lx = e.clientX; ly = e.clientY;
   });
 }
+
+// Кораблик вместо полосы прокрутки: едет по тонкой линии справа в такт прокрутке, носом по направлению движения,
+// за ним короткий хвост пыли. Его можно тянуть мышью. Только компьютер с мышью
+if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
+  document.documentElement.classList.add('shipbar');
+  const bar = document.createElement('div'); bar.className = 'ship-track'; bar.setAttribute('aria-hidden', 'true');
+  bar.innerHTML = '<svg class="ship" viewBox="0 0 20 34" width="16" height="27"><path d="M10 1C14 7 15.5 14 15 22l3.5 4.5v4.5L14 28.5 12.5 31h-5L6 28.5 1.5 31v-4.5L5 22C4.5 14 6 7 10 1z" fill="#000" stroke="#ece7dd" stroke-width="1.2" stroke-linejoin="round"/><circle cx="10" cy="12.5" r="2.2" fill="none" stroke="#ece7dd" stroke-width="1"/></svg><canvas class="ship-exhaust"></canvas>';
+  document.body.appendChild(bar);
+  const ship = bar.querySelector('.ship'), cv = bar.querySelector('canvas'), cx = cv.getContext('2d'), P = [];
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let y = 0, lastScroll = scrollY, dirDown = true, ang = 180, drag = null, run = false;
+  const track = () => { const h = bar.clientHeight, max = document.documentElement.scrollHeight - innerHeight; return { h, max, p: max > 0 ? scrollY / max : 0 }; };
+  const size = () => { cv.width = 40 * (devicePixelRatio || 1); cv.height = bar.clientHeight * (devicePixelRatio || 1); bar.hidden = document.documentElement.scrollHeight - innerHeight < 40; };
+  size(); addEventListener('resize', size); addEventListener('load', size);
+  const frame = () => {
+    const { h, p } = track(), target = 14 + p * (h - 28);
+    y += (target - y) * (still ? 1 : .18);
+    const want = dirDown ? 180 : 0; ang += (want - ang) * .15;
+    ship.style.transform = 'translate(-50%,' + (y - 13.5) + 'px) rotate(' + ang + 'deg)';
+    const d = devicePixelRatio || 1; cx.setTransform(d, 0, 0, d, 0, 0); cx.clearRect(0, 0, 40, h);
+    if (!still && Math.abs(target - y) > .6) { const tail = dirDown ? -1 : 1; for (let i = 0; i < 2; i++) P.push({ x: 20 + (Math.random() - .5) * 4, y: y + tail * 15, vx: (Math.random() - .5) * .3, vy: tail * (.4 + Math.random() * .6), life: 1 }); }
+    for (let i = P.length - 1; i >= 0; i--) { const q = P[i]; q.x += q.vx; q.y += q.vy; q.life -= .05; if (q.life <= 0) { P.splice(i, 1); continue; } cx.fillStyle = 'rgba(236,231,221,' + q.life * .5 + ')'; cx.beginPath(); cx.arc(q.x, q.y, .5 + q.life, 0, 6.283); cx.fill(); }
+    if (Math.abs(target - y) > .3 || P.length || Math.abs(want - ang) > .5) requestAnimationFrame(frame); else run = false;
+  };
+  const kick = () => { if (!run) { run = true; requestAnimationFrame(frame); } };
+  addEventListener('scroll', () => { if (scrollY !== lastScroll) dirDown = scrollY > lastScroll; lastScroll = scrollY; kick(); }, { passive: true });
+  // тянуть кораблик или щёлкнуть по линии — как по обычному ползунку
+  const toScroll = e => { const r = bar.getBoundingClientRect(), { max } = track(); scrollTo({ top: Math.min(1, Math.max(0, (e.clientY - r.top - 14) / (r.height - 28))) * max }); };
+  bar.addEventListener('pointerdown', e => { drag = e.pointerId; bar.setPointerCapture(drag); bar.classList.add('grab'); toScroll(e); });
+  bar.addEventListener('pointermove', e => { if (drag === e.pointerId) toScroll(e); });
+  bar.addEventListener('pointerup', () => { drag = null; bar.classList.remove('grab'); });
+  y = 14 + track().p * (bar.clientHeight - 28); kick();
+}
+
