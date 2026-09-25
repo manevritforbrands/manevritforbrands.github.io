@@ -135,6 +135,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .groups.wide{max-width:1800px;gap:clamp(70px,8vw,130px)}
 .row.r1{grid-template-columns:minmax(0,1fr)}
 .row.mix{grid-template-columns:3fr 4fr}
+/* Отдельные кадры без серии: крупнее и уже, чтобы не читались как ещё одна серия */
+.group.solo{width:100%;max-width:1080px;justify-self:center}
 .group .note{margin:14px 0 0;font-style:italic;font-size:15px;color:var(--dim)}
 .tile{position:relative;display:block;width:100%;overflow:hidden;background:var(--screen);cursor:zoom-in}
 .tile img{width:100%;height:auto;transition:transform 1.4s var(--ease),filter .8s var(--ease);filter:brightness(.94)}
