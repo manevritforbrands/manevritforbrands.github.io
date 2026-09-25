@@ -14,7 +14,8 @@
 | 5 | Карточка «Контакты», титр | MANEVRIT *for Brands* |
 | 6 | Карточка «Контакты», имя | Расул |
 | 7 | Карточка «Контакты», роль | AI-креатор · Ростов-на-Дону |
-| 8 | Карточка «Контакты», кнопки | Telegram · Instagram |
+| 8 | Карточка «Контакты», кнопки | Telegram (t.me/ManeVRit) · Instagram (instagram.com/manevritforbrands/reels/) |
+| 8а ✱ | Карточка «Контакты», под кнопками | +7 988 535-87-81 · rasulgeidarov@yandex.com |
 
 ## Главная (`index.html`)
 
