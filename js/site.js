@@ -91,14 +91,20 @@ if (lb) {
   addEventListener('keydown', e => { if (!lb.open) return; if (e.key === 'ArrowLeft') open(at - 1); if (e.key === 'ArrowRight') open(at + 1); });
 }
 
-// Слоты под будущие ролики: блок появляется, только если его файл уже лежит в репозитории
+// Серия фото: ширина строки по числу кадров, которые реально стоят на странице (слоты без файла не в счёт)
+const fitSeries = g => g.style.setProperty('--n', g.querySelectorAll('.row > .tile').length);
+document.querySelectorAll('.group.series').forEach(fitSeries);
+
+// Слоты под будущие ролики и фото: блок появляется, только если его файл уже лежит в репозитории
 document.querySelectorAll('template.slot').forEach(t => {
   fetch(t.dataset.probe, { method: 'HEAD' }).then(r => {
     if (!r.ok) return;
     const node = t.content.cloneNode(true);
     const vs = [...node.querySelectorAll('.clip video')];
+    const series = t.closest('.group.series');
     t.replaceWith(node);
     vs.forEach(v => clipObserver.observe(v));
+    if (series) fitSeries(series);
   }).catch(() => {});
 });
 

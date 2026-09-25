@@ -135,6 +135,11 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .groups.wide{max-width:1800px;gap:clamp(70px,8vw,130px)}
 .row.r1{grid-template-columns:minmax(0,1fr)}
 .row.mix{grid-template-columns:3fr 4fr}
+/* Серия фото: строка из стольких кадров, сколько есть (--n ставит site.js). Кадр всегда шириной в пятую часть,
+   неполная строка встаёт по центру вместе с подписью — без пустых ячеек. Кадры другого формата подрезаются до 4:5 */
+.group.series{--g:clamp(8px,1vw,14px);width:calc((100% + var(--g)) * var(--n,5) / 5 - var(--g));justify-self:center}
+.group.series .row{grid-template-columns:repeat(var(--n,5),minmax(0,1fr))}
+.group.series .tile img{aspect-ratio:4/5;object-fit:cover}
 /* Отдельные кадры без серии: крупнее и уже, чтобы не читались как ещё одна серия */
 .group.solo{width:100%;max-width:1080px;justify-self:center}
 .group .note{margin:14px 0 0;font-style:italic;font-size:15px;color:var(--dim)}
@@ -163,6 +168,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   .row.r5::-webkit-scrollbar{display:none}
   .row.r5 > *{flex:0 0 68vw;scroll-snap-align:center}
   .row.r3 > :first-child{grid-column:1/-1}
+  .group.series{width:auto;justify-self:stretch}
   .row.r2,.row.mix{grid-template-columns:1fr}
 }
 
