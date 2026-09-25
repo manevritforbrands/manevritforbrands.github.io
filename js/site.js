@@ -52,21 +52,20 @@ if (reel) {
   if (vids.length > 1 && !reduce) setInterval(() => { cur = (cur + 1) % vids.length; show(cur); }, EVERY);
 }
 
-// Поля по бокам от кадра на главной: тонкие линии перспективы и звёзды в три слоя глубины, изредка падающая звезда.
+// Главная: тонкие линии перспективы от углов кадра к краям экрана. Звёзды — общий слой .space ниже.
 // Кадр не трогаем. Только на компьютере с мышью; при «уменьшить движение» — ничего
 const hall = document.querySelector('.hero .reel');
 if (hall && matchMedia('(min-width:761px) and (hover:hover) and (pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const hero = hall.parentElement, c = document.createElement('canvas'), x = c.getContext('2d');
   c.className = 'hall'; c.setAttribute('aria-hidden', 'true'); hero.appendChild(c);
-  let W, H, dpr, mx = 0, my = 0, tx = 0, ty = 0, px = -1e4, py = -1e4, on = true;
+  let W, H, dpr, mx = 0, my = 0, tx = 0, ty = 0, on = true;
   const size = () => { dpr = devicePixelRatio || 1; W = hero.clientWidth; H = hero.clientHeight; c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px'; };
   size(); addEventListener('resize', size);
-  addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; const h = hero.getBoundingClientRect(); px = e.clientX - h.left; py = e.clientY - h.top; });
+  addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; });
+  // шторки съехались — полосы над и под кадром становятся прозрачными, сквозь них видно звёзды
+  setTimeout(() => hero.classList.add('open'), 2100);
   new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) requestAnimationFrame(draw); }).observe(hero);
   const lerp = (a, b, t) => a + (b - a) * t;
-  // звёзды: z — глубина (0 далеко, 1 близко); ближние крупнее, ярче, быстрее и сильнее уходят за мышью
-  const dust = Array.from({ length: 150 }, () => { const z = Math.pow(Math.random(), 1.8); return { x: Math.random(), y: Math.random(), z, vx: 0, vy: -(.00001 + z * .00012), ph: Math.random() * 6.28, ox: 0, oy: 0 }; });
-  let shoot = null, nextShoot = performance.now() + 6000 + Math.random() * 8000;
   function draw(t) {
     if (!on) return;
     mx += (tx - mx) * .05; my += (ty - my) * .05;
@@ -82,22 +81,6 @@ if (hall && matchMedia('(min-width:761px) and (hover:hover) and (pointer:fine)')
     for (const [ex, ct, cb] of [[L, C[0], C[2]], [R, C[1], C[3]]]) for (const p of [.12, .27, .46, .7, 1]) {
       const k = Math.pow(p, 1.7), X = lerp(ex, ct[0], k);
       x.beginPath(); x.moveTo(X, lerp(T, ct[1], k)); x.lineTo(X, lerp(B, cb[1], k)); x.stroke();
-    }
-    // звёзды: медленно всплывают, мерцают, расходятся от мыши
-    for (const d of dust) {
-      d.x += d.vx; d.y += d.vy; if (d.y < -.02) { d.y = 1.02; d.x = Math.random(); } d.x = (d.x + 1) % 1;
-      const X = d.x < .5 ? d.x * 2 * L : R + (d.x - .5) * 2 * (W - R), Y = d.y * H;
-      const dx = X - px, dy = Y - py, dist = Math.hypot(dx, dy) || 1, push = Math.max(0, 1 - dist / 170);
-      d.ox += (dx / dist * push * 46 - d.ox) * .08; d.oy += (dy / dist * push * 46 - d.oy) * .08;
-      x.fillStyle = 'rgba(236,231,221,' + (.24 + d.z * .55) * (.55 + .45 * Math.sin(t / (700 + d.z * 900) + d.ph)) + ')';
-      x.beginPath(); x.arc(X + d.ox - mx * 70 * d.z, Y + d.oy - my * 35 * d.z, .65 + d.z * 1.6, 0, 6.283); x.fill();
-    }
-    // падающая звезда: раз в 10–20 с, по одному из полей, тонкий росчерк
-    if (!shoot && t > nextShoot) { const left = Math.random() < .5, x0 = left ? Math.random() * L * .7 : R + (W - R) * (.3 + Math.random() * .7); shoot = { x: x0, y: Math.random() * H * .45, vx: (left ? 1 : -1) * (2.2 + Math.random()), vy: 1.4 + Math.random() * .8, life: 1, left }; }
-    if (shoot) {
-      const sh = shoot; sh.x += sh.vx; sh.y += sh.vy; sh.life -= .014;
-      if (sh.life <= 0 || (sh.left ? sh.x > L : sh.x < R)) { shoot = null; nextShoot = t + 10000 + Math.random() * 10000; }
-      else { x.strokeStyle = 'rgba(236,231,221,' + sh.life * .55 + ')'; x.lineWidth = 1; x.beginPath(); x.moveTo(sh.x, sh.y); x.lineTo(sh.x - sh.vx * 16, sh.y - sh.vy * 16); x.stroke(); }
     }
     x.restore(); requestAnimationFrame(draw);
   }
@@ -245,6 +228,45 @@ if (matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(pref
   });
 }
 
+// Космос по бокам на всех страницах: неподвижный слой под содержимым, звёзды только в полях шире колонки 1360px.
+// Три слоя глубины: при прокрутке ближние звёзды уходят быстрее дальних, от мыши расходятся; изредка падающая звезда.
+// Только компьютер с мышью, без «уменьшить движение»
+if (matchMedia('(min-width:761px) and (hover:hover) and (pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const c = document.createElement('canvas'), x = c.getContext('2d');
+  c.className = 'space'; c.setAttribute('aria-hidden', 'true'); document.body.prepend(c);
+  let W, H, dpr, side, mx = 0, my = 0, tx = 0, ty = 0, px = -1e4, py = -1e4;
+  const size = () => { dpr = devicePixelRatio || 1; W = innerWidth; H = innerHeight; side = Math.max(0, (W - 1360) / 2); c.width = W * dpr; c.height = H * dpr; };
+  size(); addEventListener('resize', size);
+  addEventListener('pointermove', e => { tx = e.clientX / W - .5; ty = e.clientY / H - .5; px = e.clientX; py = e.clientY; });
+  // z — глубина (0 далеко, 1 близко); ближние крупнее, ярче и подвижнее
+  const stars = Array.from({ length: 170 }, () => { const z = Math.pow(Math.random(), 1.8); return { x: Math.random(), y: Math.random(), z, drift: .00001 + z * .00012, ph: Math.random() * 6.28, ox: 0, oy: 0 }; });
+  let shoot = null, nextShoot = performance.now() + 6000 + Math.random() * 8000;
+  const draw = t => {
+    mx += (tx - mx) * .05; my += (ty - my) * .05;
+    x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
+    if (side > 8) {
+      for (const d of stars) {
+        d.y = (d.y - d.drift + 1) % 1;
+        const X = d.x < .5 ? d.x * 2 * side : W - side + (d.x - .5) * 2 * side;
+        const Y = ((d.y * H - scrollY * (.08 + d.z * .45)) % H + H) % H;
+        const dx = X - px, dy = Y - py, dist = Math.hypot(dx, dy) || 1, push = Math.max(0, 1 - dist / 170);
+        d.ox += (dx / dist * push * 46 - d.ox) * .08; d.oy += (dy / dist * push * 46 - d.oy) * .08;
+        x.fillStyle = 'rgba(236,231,221,' + (.24 + d.z * .55) * (.55 + .45 * Math.sin(t / (700 + d.z * 900) + d.ph)) + ')';
+        x.beginPath(); x.arc(X + d.ox - mx * 70 * d.z, Y + d.oy - my * 35 * d.z, .65 + d.z * 1.6, 0, 6.283); x.fill();
+      }
+      // падающая звезда: раз в 10–20 с, в одном из полей
+      if (!shoot && t > nextShoot) { const left = Math.random() < .5; shoot = { x: left ? Math.random() * side * .6 : W - side * (.1 + Math.random() * .5), y: Math.random() * H * .5, vx: (left ? 1 : -1) * (2.2 + Math.random()), vy: 1.4 + Math.random() * .8, life: 1, left }; }
+      if (shoot) {
+        const s = shoot; s.x += s.vx; s.y += s.vy; s.life -= .014;
+        if (s.life <= 0 || (s.left ? s.x > side : s.x < W - side)) { shoot = null; nextShoot = t + 10000 + Math.random() * 10000; }
+        else { x.strokeStyle = 'rgba(236,231,221,' + s.life * .55 + ')'; x.lineWidth = 1; x.beginPath(); x.moveTo(s.x, s.y); x.lineTo(s.x - s.vx * 16, s.y - s.vy * 16); x.stroke(); }
+      }
+    }
+    requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
+}
+
 // Кораблик вместо полосы прокрутки: едет по тонкой линии справа в такт прокрутке, носом по направлению движения,
 // за ним короткий хвост пыли. Его можно тянуть мышью. Только компьютер с мышью
 if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
@@ -256,7 +278,7 @@ if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let y = 0, lastScroll = scrollY, dirDown = true, ang = 180, drag = null, run = false;
   const track = () => { const h = bar.clientHeight, max = document.documentElement.scrollHeight - innerHeight; return { h, max, p: max > 0 ? scrollY / max : 0 }; };
-  const size = () => { cv.width = 40 * (devicePixelRatio || 1); cv.height = bar.clientHeight * (devicePixelRatio || 1); bar.hidden = document.documentElement.scrollHeight - innerHeight < 40; };
+  const size = () => { cv.width = 40 * (devicePixelRatio || 1); cv.height = bar.clientHeight * (devicePixelRatio || 1); };
   size(); addEventListener('resize', size); addEventListener('load', size);
   const frame = () => {
     const { h, p } = track(), target = 14 + p * (h - 28);

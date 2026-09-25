@@ -61,7 +61,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .reel{position:relative;width:min(100vw,1360px);justify-self:center;aspect-ratio:2.39/1;max-height:62svh;overflow:hidden;background:var(--black)}
 .reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .55s ease}
 .reel video.on{opacity:1}
-/* Зал и пыль по бокам от кадра (рисует site.js), появляются вместе с меню после шторок */
+/* Линии перспективы вокруг кадра на главной (рисует site.js), появляются вместе с меню после шторок.
+   Когда шторки съехались, полосы над и под кадром прозрачные — сквозь них видно звёзды */
+.hero.open .bar{background:transparent}
 .hall{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;animation:fade 2s 2.4s forwards}
 
 /* ── Секции ───────────────────────────────────────────────────── */
@@ -293,3 +295,5 @@ html.shipbar::-webkit-scrollbar{display:none}
 .ship-track .ship{position:absolute;left:50%;top:0;transform-origin:50% 50%;transition:filter .3s}
 .ship-track:hover .ship{filter:drop-shadow(0 0 4px rgba(236,231,221,.5))}
 .ship-track canvas{position:absolute;inset:0;width:40px;height:100%;pointer-events:none}
+/* Космос по бокам на всех страницах (рисует site.js): под всем содержимым, поверх чёрного фона */
+.space{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;opacity:0;animation:fade 2s .3s forwards}
