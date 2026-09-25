@@ -166,7 +166,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
    Разглядеть кадр — нажатием, он открывается на весь экран */
 @media (max-width:760px){
   .row.r3,.row.r5,.group.series .row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-  .row.r3 > *,.row.r5 > *{flex:0 0 calc((100% - 12px) / 3)}
+  .row.r3 > *,.row.r5 > *{flex:0 0 calc((100% - 12px) / 3);min-width:0}
   .group.series{width:auto;justify-self:stretch}
   .groups.wide{gap:56px}
   .js-reveal .row .reveal{transform:none}
@@ -249,9 +249,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* «Сроки» — не служебная приписка, а довод наравне с ценой: подпись капителью, срок крупным курсивом */
 .offer .time span{font:normal 400 13px/1 var(--cap);letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
 /* Предложение без картинки сбоку или с примером во всю ширину (строка корзин у фото) */
-.offer.stack{grid-template-columns:minmax(0,1fr)}
-.offer.stack > div:first-child{max-width:620px}
-.offer.stack .row.r5 img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.offer .row.r3 img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+/* Квадратный ролик (mono-case) — квадратом, а не обрезкой до 16:9 */
+.vtile.wide.square{max-width:520px;margin:0 auto}
+.vtile.wide.square video{aspect-ratio:1/1}
 .terms-list{max-width:980px;margin:0 auto;padding:0;list-style:none}
 .terms-list li{padding:22px 0;border-top:1px solid var(--line);font-size:clamp(17px,1.4vw,20px);color:#d6d0c5}
 .offer .pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -262,7 +263,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .marquee:hover .track{animation-play-state:paused}
 .marquee img{height:clamp(240px,34vw,460px);width:auto;aspect-ratio:4/5;object-fit:cover}
 @keyframes marquee{to{transform:translateX(-50%)}}
-@media (max-width:860px){.offer{grid-template-columns:1fr}.offer .visual{order:-1}.offer.stack .visual{order:0}}
+@media (max-width:860px){.offer{grid-template-columns:1fr}.offer .visual{order:-1}}
 @media (prefers-reduced-motion:reduce){.marquee .track{animation:none}.marquee{overflow-x:auto}}
 
 /* Общий список роликов на телефоне — сетка в две колонки, а не лента (лента — только для серий фото) */
