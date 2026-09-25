@@ -69,14 +69,13 @@ document.addEventListener('click', e => {
   if (turnOn) v.play().catch(() => {});
 });
 
-// Фото на весь экран, со стрелками по всем фото страницы
+// Фото на весь экран, со стрелками по всем фото страницы (список собирается при открытии — чтобы учесть фото из слотов)
 const lb = document.getElementById('lightbox');
 if (lb) {
-  const tiles = [...document.querySelectorAll('.tile')];
   const img = lb.querySelector('img');
-  let at = 0;
-  const open = n => { at = (n + tiles.length) % tiles.length; img.src = tiles[at].getAttribute('href'); if (!lb.open) lb.showModal(); };
-  tiles.forEach((t, n) => t.addEventListener('click', e => { e.preventDefault(); open(n); }));
+  let tiles = [], at = 0;
+  const open = n => { tiles = [...document.querySelectorAll('.tile')]; at = (n + tiles.length) % tiles.length; img.src = tiles[at].getAttribute('href'); img.alt = tiles[at].querySelector('img').alt; if (!lb.open) lb.showModal(); };
+  document.addEventListener('click', e => { const t = e.target.closest('.tile'); if (!t) return; e.preventDefault(); open([...document.querySelectorAll('.tile')].indexOf(t)); });
   lb.querySelector('.prev').addEventListener('click', () => open(at - 1));
   lb.querySelector('.next').addEventListener('click', () => open(at + 1));
   lb.addEventListener('click', e => { if (e.target.closest('[data-close]') || e.target.classList.contains('wrap')) lb.close(); });
