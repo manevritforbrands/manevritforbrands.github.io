@@ -7,9 +7,11 @@
   "prices": {
     "_photo": "AI-фото",
     "photo": "от 2 000 ₽ за кадр. Минимальный объём — от 5 изображений",
-    "_product-video": "Ролик из фото товара",
+    "_product-video": "Короткое AI-видео с продуктом",
     "product-video": "7 000 ₽",
-    "_story-video": "Ролик с сюжетом",
-    "story-video": "от 15 000 ₽"
+    "_story-video": "AI-видео с сюжетом",
+    "story-video": "от 15 000 ₽",
+    "_package": "Пакет на месяц",
+    "package": ""
   }
 }

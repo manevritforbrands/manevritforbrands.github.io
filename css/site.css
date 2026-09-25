@@ -73,7 +73,6 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .about figcaption{margin-top:12px;font-style:italic;font-size:14px;color:var(--dim)}
 .about h2{margin:0 0 28px;font:400 clamp(24px,2.4vw,36px)/1.2 var(--cap);letter-spacing:.22em;text-transform:uppercase}
 .about p{margin:0 0 20px;max-width:34em;font-size:clamp(17px,1.35vw,20px);color:#d6d0c5}
-.about .how{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);font:italic 400 clamp(22px,2.1vw,32px)/1.35 var(--text);color:var(--light)}
 
 /* Последние проекты */
 .latest{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,28px);max-width:1480px;margin:0 auto}
@@ -245,7 +244,15 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .offer .price{margin:0 0 22px;font:italic 400 clamp(22px,2vw,30px)/1.2 var(--text)}
 .offer ul{margin:0 0 22px;padding:0;list-style:none;color:#d6d0c5}
 .offer li{padding:8px 0;border-top:1px solid var(--line)}
-.offer .time{margin:0;color:var(--dim);font-style:italic}
+.offer .time{margin:0;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;font:italic 400 clamp(22px,2vw,30px)/1.2 var(--text);color:var(--light)}
+/* «Сроки» — не служебная приписка, а довод наравне с ценой: подпись капителью, срок крупным курсивом */
+.offer .time span{font:normal 400 13px/1 var(--cap);letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+/* Предложение без картинки сбоку или с примером во всю ширину (строка корзин у фото) */
+.offer.stack{grid-template-columns:minmax(0,1fr)}
+.offer.stack > div:first-child{max-width:620px}
+.offer.stack .row.r5 img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.terms-list{max-width:980px;margin:0 auto;padding:0;list-style:none}
+.terms-list li{padding:22px 0;border-top:1px solid var(--line);font-size:clamp(17px,1.4vw,20px);color:#d6d0c5}
 .offer .pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .offer .pair img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
 .vtile.wide video,.vtile.wide img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block}
@@ -254,7 +261,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .marquee:hover .track{animation-play-state:paused}
 .marquee img{height:clamp(240px,34vw,460px);width:auto;aspect-ratio:4/5;object-fit:cover}
 @keyframes marquee{to{transform:translateX(-50%)}}
-@media (max-width:860px){.offer{grid-template-columns:1fr}.offer .visual{order:-1}}
+@media (max-width:860px){.offer{grid-template-columns:1fr}.offer .visual{order:-1}.offer.stack .visual{order:0}}
 @media (prefers-reduced-motion:reduce){.marquee .track{animation:none}.marquee{overflow-x:auto}}
 
 /* Общий список роликов на телефоне — сетка в две колонки, а не лента (лента — только для серий фото) */
