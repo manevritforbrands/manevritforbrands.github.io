@@ -52,6 +52,62 @@ if (reel) {
   if (vids.length > 1 && !reduce) setInterval(() => { cur = (cur + 1) % vids.length; show(cur); }, EVERY);
 }
 
+// Поля по бокам от кадра на главной: зал тонкими линиями, ряды кресел и пыль в свете проектора.
+// Кадр не трогаем. Только на компьютере с мышью; при «уменьшить движение» — ничего
+const hall = document.querySelector('.hero .reel');
+if (hall && matchMedia('(min-width:761px) and (hover:hover) and (pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const hero = hall.parentElement, c = document.createElement('canvas'), x = c.getContext('2d');
+  c.className = 'hall'; c.setAttribute('aria-hidden', 'true'); hero.appendChild(c);
+  let W, H, dpr, mx = 0, my = 0, tx = 0, ty = 0, px = -1e4, py = -1e4, on = true;
+  const size = () => { dpr = devicePixelRatio || 1; W = hero.clientWidth; H = hero.clientHeight; c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px'; };
+  size(); addEventListener('resize', size);
+  addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; const h = hero.getBoundingClientRect(); px = e.clientX - h.left; py = e.clientY - h.top; });
+  new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) requestAnimationFrame(draw); }).observe(hero);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const dust = Array.from({ length: 130 }, () => ({ x: Math.random(), y: Math.random(), z: Math.random(), vx: (Math.random() - .5) * .00012, vy: -(.00005 + Math.random() * .00016), ph: Math.random() * 6.28, ox: 0, oy: 0 }));
+  const seat = (sx, yy, sw, sh) => { x.beginPath(); x.moveTo(sx, yy + sh); x.lineTo(sx, yy + sw * .32); x.quadraticCurveTo(sx, yy, sx + sw * .3, yy); x.lineTo(sx + sw * .7, yy); x.quadraticCurveTo(sx + sw, yy, sx + sw, yy + sw * .32); x.lineTo(sx + sw, yy + sh); };
+  function draw(t) {
+    if (!on) return;
+    mx += (tx - mx) * .05; my += (ty - my) * .05;
+    const L = hall.offsetLeft, T = hall.offsetTop, R = L + hall.offsetWidth, B = T + hall.offsetHeight;
+    const ox = -mx * 110, oy = -my * 60, C = [[ox, oy], [W + ox, oy], [ox, H + oy], [W + ox, H + oy]];
+    x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H); x.save();
+    x.beginPath(); x.rect(0, 0, W, H); x.rect(L, T, R - L, B - T); x.clip('evenodd');
+    // линии потолка и пола от углов кадра
+    x.lineWidth = 1; x.strokeStyle = 'rgba(236,231,221,.12)';
+    [[L, T, C[0]], [R, T, C[1]], [L, B, C[2]], [R, B, C[3]]].forEach(([a, b, [e, f]]) => { x.beginPath(); x.moveTo(a, b); x.lineTo(e, f); x.stroke(); });
+    // стеновые панели в перспективе
+    x.strokeStyle = 'rgba(236,231,221,.075)';
+    for (const [ex, ct, cb] of [[L, C[0], C[2]], [R, C[1], C[3]]]) for (const p of [.12, .27, .46, .7, 1]) {
+      const k = Math.pow(p, 1.7), X = lerp(ex, ct[0], k);
+      x.beginPath(); x.moveTo(X, lerp(T, ct[1], k)); x.lineTo(X, lerp(B, cb[1], k)); x.stroke();
+    }
+    // ряды кресел: ближний ряд смещается от мыши сильнее — глубина
+    for (let row = 0; row < 4; row++) {
+      const k = Math.pow((row + 1) / 4.4, 1.4), par = lerp(.2, 1.3, k), sw = lerp(20, 64, k), gap = sw * .18;
+      for (const left of [true, false]) {
+        const x0 = lerp(left ? L : R, left ? C[2][0] : C[3][0], k) - mx * 90 * par, y0 = lerp(B, H + oy, k) - lerp(4, 40, k) - my * 30 * par;
+        let sx = x0 + (left ? -sw - gap : gap);
+        for (let n = 0; n < 30 && (left ? sx + sw > -20 : sx < W + 20); n++) {
+          seat(sx, y0 + Math.abs(sx - x0) * .05, sw, sw * .9);
+          x.fillStyle = '#050505'; x.fill(); x.strokeStyle = 'rgba(236,231,221,' + (.07 + k * .08) + ')'; x.stroke();
+          sx += (left ? -1 : 1) * (sw + gap);
+        }
+      }
+    }
+    // пыль: плывёт вверх, мерцает, расходится от мыши
+    for (const d of dust) {
+      d.x += d.vx; d.y += d.vy; if (d.y < -.02) { d.y = 1.02; d.x = Math.random(); } d.x = (d.x + 1) % 1;
+      const X = d.x < .5 ? d.x * 2 * L : R + (d.x - .5) * 2 * (W - R), Y = d.y * H;
+      const dx = X - px, dy = Y - py, dist = Math.hypot(dx, dy) || 1, push = Math.max(0, 1 - dist / 170);
+      d.ox += (dx / dist * push * 46 - d.ox) * .08; d.oy += (dy / dist * push * 46 - d.oy) * .08;
+      x.fillStyle = 'rgba(236,231,221,' + (.18 + d.z * .5) * (.6 + .4 * Math.sin(t / 900 + d.ph)) + ')';
+      x.beginPath(); x.arc(X + d.ox - mx * 40 * d.z, Y + d.oy - my * 20 * d.z, .7 + d.z * 1.5, 0, 6.283); x.fill();
+    }
+    x.restore(); requestAnimationFrame(draw);
+  }
+}
+
 // Карточки проектов: ролик грузится и играет только при наведении
 document.querySelectorAll('.card').forEach(card => {
   const v = card.querySelector('video');
