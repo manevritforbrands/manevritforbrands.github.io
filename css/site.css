@@ -297,3 +297,12 @@ html.shipbar::-webkit-scrollbar{display:none}
 .ship-track canvas{position:absolute;inset:0;width:40px;height:100%;pointer-events:none}
 /* Космос по бокам на всех страницах (рисует site.js): под всем содержимым, поверх чёрного фона */
 .space{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;opacity:0;animation:fade 2s .3s forwards}
+/* Политика конфиденциальности: узкая колонка текста */
+.legal{max-width:760px;margin:0 auto;padding:0 var(--gutter) clamp(80px,10vw,140px);color:#d6d0c5}
+.legal h2{margin:48px 0 14px;font:400 15px/1.4 var(--cap);letter-spacing:.2em;text-transform:uppercase;color:var(--light)}
+.legal p{margin:0 0 14px}
+.legal ul{margin:0 0 14px;padding-left:1.1em}
+.legal li{margin:0 0 8px}
+.legal b{font-weight:400;color:var(--light)}
+.legal a,.foot span a{border-bottom:1px solid #444}
+.legal a:hover,.foot span a:hover{color:var(--light);border-color:var(--light)}
