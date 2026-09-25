@@ -226,7 +226,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .player .wrap{height:100%;display:grid;grid-template-rows:auto 1fr auto;padding:14px clamp(12px,3vw,40px) 18px}
 .player .bar{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--dim)}
 .player .stage{display:grid;place-items:center;min-height:0}
-.player video{max-width:100%;max-height:100%;width:auto;height:auto;background:#000}
+/* Высота считается от экрана: вертикальный ролик (racing-case) целиком помещается, без прокрутки. 140px — счётчик, подпись и поля */
+.player video{max-width:100%;max-height:calc(100svh - 140px);width:auto;height:auto;background:#000}
 .player .cap{text-align:center;font-style:italic;color:var(--dim);margin:12px 0 0}
 .player .x{font-size:30px;line-height:1;color:var(--dim)}.player .x:hover{color:var(--light)}
 .player .nav-btn{position:fixed;top:50%;translate:0 -50%;font-size:34px;color:var(--dim);padding:20px}
