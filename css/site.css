@@ -162,13 +162,14 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .lightbox .nav-btn:hover{color:var(--light)}
 .lightbox .prev{left:4px}.lightbox .next{right:4px}
 
+/* Телефон: фото — сетка небольших превью по три в ряд, неполный последний ряд по центру. Без ленты вбок: она дёргалась при прокрутке.
+   Разглядеть кадр — нажатием, он открывается на весь экран */
 @media (max-width:760px){
-  .row.r3{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .row.r5{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--gutter)*-1);padding:0 var(--gutter);scrollbar-width:none}
-  .row.r5::-webkit-scrollbar{display:none}
-  .row.r5 > *{flex:0 0 68vw;scroll-snap-align:center}
-  .row.r3 > :first-child{grid-column:1/-1}
+  .row.r3,.row.r5,.group.series .row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  .row.r3 > *,.row.r5 > *{flex:0 0 calc((100% - 12px) / 3)}
   .group.series{width:auto;justify-self:stretch}
+  .groups.wide{gap:56px}
+  .js-reveal .row .reveal{transform:none}
   .row.r2,.row.mix{grid-template-columns:1fr}
 }
 
