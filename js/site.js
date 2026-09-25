@@ -15,7 +15,9 @@ if (contact) {
 
 // Тексты, которые ждут данных от заказчика, вписываются в одном месте — content.json в корне.
 // Подпись работы: у элемента с data-work="имя" — в data-caption (кадр на главной, плеер) или текстом (карточка)
-fetch('/content.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(c => {
+// Там же — список заготовок, которые уже лежат в репозитории (slots, case): по нему, а не запросами вслепую, решается, что показать
+const content = fetch('/content.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
+content.then(c => {
   if (!c) return;
   Object.entries(c.captions || {}).forEach(([work, text]) => {
     document.querySelectorAll(`[data-work="${work}"]`).forEach(el => {
@@ -133,21 +135,23 @@ if (lb) {
 const fitSeries = g => g.style.setProperty('--n', g.querySelectorAll('.row > .tile').length);
 document.querySelectorAll('.group.series').forEach(fitSeries);
 
-// Слоты под будущие ролики и фото: блок появляется, только если его файл уже лежит в репозитории
-document.querySelectorAll('template.slot').forEach(t => {
-  fetch(t.dataset.probe, { method: 'HEAD' }).then(r => {
-    if (!r.ok) return;
+// Слоты под будущие ролики и фото: блок появляется, только если его имя вписано в content.json → slots
+// (имя — начало имени файла из data-probe, например niche-fashion). Без списка сервер не опрашивается
+content.then(c => {
+  const have = new Set((c && c.slots) || []);
+  document.querySelectorAll('template.slot').forEach(t => {
+    if (!have.has(t.dataset.probe.split('/').pop().split('.')[0])) return;
     const node = t.content.cloneNode(true);
     const vs = [...node.querySelectorAll('.clip video')];
     const series = t.closest('.group.series');
     t.replaceWith(node);
     vs.forEach(v => clipObserver.observe(v));
     if (series) fitSeries(series);
-  }).catch(() => {});
+  });
 });
 
-// Вход → выход: блок собирается из case.json и показывается, только если кейс уже лежит в репозитории
-document.querySelectorAll('[data-case]').forEach(sec => {
+// Вход → выход: блок собирается из case.json и показывается, только если в content.json стоит "case": true
+content.then(cfg => cfg && cfg.case && document.querySelectorAll('[data-case]').forEach(sec => {
   const base = sec.dataset.case;
   fetch(base + 'case.json').then(r => r.ok ? r.json() : null).then(c => {
     if (!c || !c.photos || !c.photos.length || !c.result) return;
@@ -160,7 +164,7 @@ document.querySelectorAll('[data-case]').forEach(sec => {
     sec.hidden = false;
     clipObserver.observe(sec.querySelector('.io-out video'));
   }).catch(() => {});
-});
+}));
 
 // Проявление блоков при прокрутке; без JS и при «уменьшить движение» всё видно сразу
 if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
