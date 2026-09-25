@@ -13,6 +13,18 @@ if (contact) {
   contact.addEventListener('click', e => { if (e.target.closest('[data-close]') || !e.target.closest('.panel')) contact.close(); });
 }
 
+// Тексты, которые ждут данных от заказчика, вписываются в одном месте — content.json в корне.
+// Подпись работы: у элемента с data-work="имя" — в data-caption (кадр на главной, плеер) или текстом (карточка)
+fetch('/content.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(c => {
+  if (!c) return;
+  Object.entries(c.captions || {}).forEach(([work, text]) => {
+    document.querySelectorAll(`[data-work="${work}"]`).forEach(el => {
+      if ('caption' in el.dataset) el.dataset.caption = text;
+      else { el.textContent = text; el.hidden = !text; }
+    });
+  });
+}).catch(() => {});
+
 // Главный экран: ролики в одном кадре сменяют друг друга каждые 3 секунды
 const reel = document.querySelector('.reel');
 if (reel) {

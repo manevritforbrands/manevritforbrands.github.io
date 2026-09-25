@@ -16,8 +16,8 @@
 <link rel="apple-touch-icon" href="favicon.png?v=20260824">
 <link rel="preload" href="fonts/forum-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/old-standard-tt-normal-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/fonts.css?v=202609250043">
-<link rel="stylesheet" href="css/site.css?v=202609250043">
+<link rel="stylesheet" href="css/fonts.css?v=202609250045">
+<link rel="stylesheet" href="css/site.css?v=202609250045">
 </head>
 <body>
 <main>
@@ -32,7 +32,7 @@
         <source src="assets/videos/asmr-olive.h264.mp4" type="video/mp4; codecs=avc1.4d401f">
         <source src="assets/videos/asmr-olive.av1.mp4" type="video/mp4; codecs=av01.0.05M.08">
       </video>
-      <video poster="assets/posters/lingerie-water.jpg" preload="none" muted loop playsinline data-caption="Творческая работа">
+      <video poster="assets/posters/lingerie-water.jpg" preload="none" muted loop playsinline data-caption="" data-work="lingerie-water">
         <source src="assets/videos/lingerie-water.h264.mp4" type="video/mp4; codecs=avc1.4d401f">
         <source src="assets/videos/lingerie-water.av1.mp4" type="video/mp4; codecs=av01.0.05M.08">
       </video>
@@ -88,11 +88,11 @@
       <p>Творческая работа</p>
     </a>
       <a class="card" href="/video">
-      <div class="shot"><img src="assets/posters/lingerie-water-pool.jpg" alt="" loading="lazy"><video poster="assets/posters/lingerie-water-pool.jpg" preload="none" muted loop playsinline data-caption="Творческая работа">
+      <div class="shot"><img src="assets/posters/lingerie-water-pool.jpg" alt="" loading="lazy"><video poster="assets/posters/lingerie-water-pool.jpg" preload="none" muted loop playsinline>
         <source src="assets/videos/lingerie-water.h264.mp4" type="video/mp4; codecs=avc1.4d401f">
         <source src="assets/videos/lingerie-water.av1.mp4" type="video/mp4; codecs=av01.0.05M.08">
       </video></div>
-      <p>Творческая работа</p>
+      <p data-work="lingerie-water" hidden></p>
     </a>
       <a class="card" href="/photo#legs">
         <div class="shot" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">
@@ -123,6 +123,6 @@
     </div>
   </div></div>
 </dialog>
-<script src="js/site.js?v=202609250043"></script>
+<script src="js/site.js?v=202609250045"></script>
 </body>
 </html>
