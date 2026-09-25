@@ -23,6 +23,11 @@ fetch('/content.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).
       else { el.textContent = text; el.hidden = !text; }
     });
   });
+  // Цены на «Стоимости»: пустая — остаётся «по запросу»
+  Object.entries(c.prices || {}).forEach(([k, text]) => {
+    const el = text && document.querySelector(`[data-price="${k}"]`);
+    if (el) el.textContent = text;
+  });
 }).catch(() => {});
 
 // Главный экран: ролики в одном кадре сменяют друг друга каждые 3 секунды
