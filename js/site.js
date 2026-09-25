@@ -33,6 +33,9 @@ fetch('/content.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).
 // Главный экран: ролики в одном кадре сменяют друг друга каждые 3 секунды. Только картинка, без звука и подписей
 const reel = document.querySelector('.reel');
 if (reel) {
+  // Вертикальные ролики (data-only="phone") — только в кадре 4:5 на телефоне; в широком кадре компьютера от них осталась бы узкая полоса
+  const phone = matchMedia('(max-width:760px)').matches;
+  reel.querySelectorAll('video[data-only="phone"]').forEach(v => { if (!phone) v.remove(); });
   const vids = [...reel.querySelectorAll('video')];
   const EVERY = 3000;
   let cur = 0;
