@@ -171,6 +171,8 @@ if (player) {
     if (!player.open) player.showModal();
   };
   document.addEventListener('click', e => { const t = e.target.closest('.vtile'); if (!t) return; e.preventDefault(); collect(); open(list.indexOf(t)); });
+  // Превью — не ссылки (иначе браузер показывает адрес файла внизу), поэтому с клавиатуры открываются по Enter и пробелу
+  document.addEventListener('keydown', e => { const t = e.target.closest && e.target.closest('.vtile'); if (!t || (e.key !== 'Enter' && e.key !== ' ')) return; e.preventDefault(); collect(); open(list.indexOf(t)); });
   player.querySelector('.prev').addEventListener('click', () => open(at - 1));
   player.querySelector('.next').addEventListener('click', () => open(at + 1));
   player.querySelector('[data-close]').addEventListener('click', () => player.close());
